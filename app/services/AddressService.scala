@@ -2,6 +2,9 @@ package services
 
 import org.joda.time.Days
 
+// I read from file every time when data is needed
+// maybe I should read the data once and 'cache' it
+// depending on the requirements, a trade off between performance and availability should be made
 trait AddressService {
   def countMales: Int
 
