@@ -24,9 +24,11 @@ class FileAddressBookDataServiceImpl(fileLocation: String) extends AddressBookDa
     }
 
   override def retrieveAll(): Iterator[AddressBook] =
-    getByLine.map(_.split(","))
-      .filter(_.length == 3)
-      .map(tokens => AddressBook(tokens))
+    getByLine.map(AddressBook(_))
+      .flatten
+  //  getByLine.map(_.split(","))
+//      .filter(_.length == 3)
+//      .map(tokens => AddressBook(tokens))
 }
 
 object FileAddressBookDataServiceImpl {
@@ -41,6 +43,14 @@ object AddressBook {
   def apply(tokens: Array[String]) = {
     val fullName = tokens.head.trim.split(" ")
     new AddressBook(fullName(0), fullName(1), tokens(1).trim.equals("Male"), formatter.parseDateTime(tokens(2).trim))
+  }
+  def apply(line: String) = {
+    val tokens = line.split(",")
+    if(tokens.size == 3){
+      val fullName = tokens.head.trim.split(" ")
+      val addressBook = new AddressBook(fullName(0), fullName(1), tokens(1).trim.equals("Male"), formatter.parseDateTime(tokens(2).trim))
+      Some(addressBook)
+    }else None
   }
 }
 
