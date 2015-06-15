@@ -5,13 +5,16 @@ import org.joda.time.format.DateTimeFormat
 
 import scala.io.Source
 
+// generic trait for retrieving address books
+// it can have multiple implementation - from file, from database, from moon
 trait AddressBookDataService {
   def retrieveAll(): Stream[AddressBook]
 }
 
-class FileAddressBookDataService(fileLocation: String) extends AddressBookDataService {
+// file address books service retrieval
+class FileAddressBookDataServiceImpl(fileLocation: String) extends AddressBookDataService {
 
-  private def getByLine =
+  private[this] def getByLine =
     Source.fromFile(fileLocation)
       .getLines()
 
@@ -21,9 +24,14 @@ class FileAddressBookDataService(fileLocation: String) extends AddressBookDataSe
       .map(tokens => AddressBook(tokens))
 }
 
+object FileAddressBookDataServiceImpl {
+  def apply(fileLocation: String) =
+    new FileAddressBookDataServiceImpl(fileLocation)
+}
+
 
 object AddressBook {
-  lazy val formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+  lazy val formatter = DateTimeFormat.forPattern("dd/MM/yyyy")
 
   def apply(tokens: Array[String]) = {
     val fullName = tokens.head.trim.split(" ")
